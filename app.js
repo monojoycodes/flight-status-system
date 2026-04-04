@@ -3,6 +3,11 @@ import dotenv from "dotenv"
 import cors from "cors"
 import bodyParser from "body-parser"
 import authRouter from "./src/routes/auth.routes.js"
+import cookieParser from "cookie-parser"
+import { verifyToken } from "./src/middlewares/auth.middleware.js";
+import flightRouter from "./src/routes/flight.routes.js";
+
+
 
 dotenv.config()
 
@@ -10,6 +15,7 @@ const app = express()
 
 //middlewares
 app.use(cors())
+app.use(cookieParser());
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
@@ -54,5 +60,15 @@ app.use((err, req, res, next) => {
             error: err.message
         })
 })
+
+// 🔐 TEST PROTECTED ROUTE
+app.get("/api/v1/me", verifyToken, (req, res) => {
+  res.status(200).json({
+    message: "You are authenticated",
+    user: req.user
+  });
+});
+
+app.use("/api/v1/flight", flightRouter);
 
 export default app
