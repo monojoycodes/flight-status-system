@@ -6,7 +6,7 @@ import authRouter from "./src/routes/auth.routes.js"
 import cookieParser from "cookie-parser"
 import { verifyToken } from "./src/middlewares/auth.middleware.js";
 import flightRouter from "./src/routes/flight.routes.js";
-
+import userRouter from "./src/routes/user.routes.js";
 
 
 dotenv.config()
@@ -70,5 +70,6 @@ app.get("/api/v1/me", verifyToken, (req, res) => {
 });
 
 app.use("/api/v1/flight", flightRouter);
+app.use("/api/v1/users", userRouter);
 
 export default app

@@ -58,3 +58,48 @@ export const getFlights = async (req, res) => {
     });
   }
 };
+
+//update flight
+export const updateFlight = async (req, res) => {
+  try {
+    const updates = req.body;
+
+    // prevent ARL from changing airline
+    if (req.user.role === "ARL") {
+      updates.airline = req.user.airline;
+    }
+
+    const updatedFlight = await schedule.findByIdAndUpdate(
+      req.params.id,
+      updates,
+      { new: true }
+    );
+
+    res.status(200).json({
+      message: "Flight updated",
+      flight: updatedFlight
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Error updating flight",
+      error: error.message
+    });
+  }
+};
+
+export const deleteFlight = async (req, res) => {
+  try {
+    await schedule.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({
+      message: "Flight deleted"
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Error deleting flight",
+      error: error.message
+    });
+  }
+};
