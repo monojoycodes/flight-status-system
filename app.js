@@ -63,9 +63,16 @@ app.use((err, req, res, next) => {
 
 // 🔐 TEST PROTECTED ROUTE
 app.get("/api/v1/me", verifyToken, (req, res) => {
+  const { name, email, code, airline, role } = req.user;
   res.status(200).json({
     message: "You are authenticated",
-    user: req.user
+    user: {
+      username: name,
+      email,
+      code,
+      airline,
+      role
+    }
   });
 });
 

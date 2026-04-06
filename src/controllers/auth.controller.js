@@ -1,4 +1,5 @@
-import { User } from "../models/users.js";
+import  User from "../models/users.js";
+import bcrypt from "bcrypt"
 
 export const login = async (req, res) => {
   try {
@@ -18,6 +19,11 @@ export const login = async (req, res) => {
 
     const { accessToken, refreshToken } = user.generateTokens();
 
+    // 🔒 hash refresh token before storing
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    user.refreshToken = hashedRefreshToken;
+
+    await user.save();
     // 🍪 Set cookies
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
@@ -61,7 +67,6 @@ const generateUniqueCode = async () => {
 
   return code;
 };
-
 
 export const register = async (req, res) => {
     try {
@@ -109,3 +114,50 @@ export const register = async (req, res) => {
         });
     }
 };
+
+export const createUserByAdmin = async (req, res) => {
+  try {
+    const { name, email, password, role, airline } = req.body;
+
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      return res.status(400).json({
+        message: "User already exists"
+      });
+    }
+
+    // 🔥 role validation
+    if (!["ARL", "AOT"].includes(role)) {
+      return res.status(400).json({
+        message: "Invalid role"
+      });
+    }
+
+    const code = await generateUniqueCode();
+
+    const user = await User.create({
+      name,
+      email,
+      password,
+      role,
+      airline: role === "ARL" ? airline : null,
+      code
+    });
+
+    return res.status(201).json({
+      message: "User created by admin",
+      user: {
+        email: user.email,
+        role: user.role
+      }
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: "Admin user creation failed",
+      error: error.message
+    });
+  }
+};
+

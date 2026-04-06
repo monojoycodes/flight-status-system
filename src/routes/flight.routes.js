@@ -47,6 +47,7 @@ router.delete(
   "/:id",
   verifyToken,
   allowRoles("AOT"),
+  checkFlightOwnership,
   deleteFlight
 );
 

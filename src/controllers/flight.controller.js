@@ -62,22 +62,20 @@ export const getFlights = async (req, res) => {
 //update flight
 export const updateFlight = async (req, res) => {
   try {
-    const updates = req.body;
+    const flight = req.flight; // from middleware
 
-    // prevent ARL from changing airline
+    // 🔥 Prevent ARL from changing airline
     if (req.user.role === "ARL") {
-      updates.airline = req.user.airline;
+      req.body.airline = flight.airline;
     }
 
-    const updatedFlight = await schedule.findByIdAndUpdate(
-      req.params.id,
-      updates,
-      { new: true }
-    );
+    Object.assign(flight, req.body);
+
+    await flight.save();
 
     res.status(200).json({
-      message: "Flight updated",
-      flight: updatedFlight
+      message: "Flight updated successfully",
+      flight
     });
 
   } catch (error) {
@@ -90,10 +88,12 @@ export const updateFlight = async (req, res) => {
 
 export const deleteFlight = async (req, res) => {
   try {
-    await schedule.findByIdAndDelete(req.params.id);
+    const flight = req.flight;
+
+    await flight.deleteOne();
 
     res.status(200).json({
-      message: "Flight deleted"
+      message: "Flight deleted successfully"
     });
 
   } catch (error) {
