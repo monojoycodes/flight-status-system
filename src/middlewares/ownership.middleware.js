@@ -17,10 +17,7 @@ export const checkFlightOwnership = async (req, res, next) => {
     }
 
     // 🟡 ARL → only own airline
-    if (
-      req.user.role === "ARL" &&
-      req.user.airline === flight.airline
-    ) {
+    if (req.user.role === "ARL" && req.user.airline === flight.airline) {
       req.flight = flight;
       return next();
     }
@@ -29,7 +26,6 @@ export const checkFlightOwnership = async (req, res, next) => {
     return res.status(403).json({
       message: "Not authorized to modify this flight"
     });
-
   } catch (error) {
     return res.status(500).json({
       message: "Ownership check failed",

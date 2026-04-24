@@ -6,10 +6,10 @@
 
 Build a **secure backend system** to:
 
-* Manage flight departure schedules
-* Enforce **role-based access (RBAC)**
-* Support **airline-specific ownership control**
-* Provide data to display systems (read-only users)
+- Manage flight departure schedules
+- Enforce **role-based access (RBAC)**
+- Support **airline-specific ownership control**
+- Provide data to display systems (read-only users)
 
 ---
 
@@ -17,32 +17,29 @@ Build a **secure backend system** to:
 
 ## 1. Airline Staff (`ARL`)
 
-* Can:
+- Can:
+  - Create flights (ONLY their airline)
+  - Update their own flights
 
-  * Create flights (ONLY their airline)
-  * Update their own flights
-* Cannot:
-
-  * Modify other airline data
+- Cannot:
+  - Modify other airline data
 
 ---
 
 ## 2. Airport Operations Team (`AOT`)
 
-* Full control:
-
-  * Create, update, delete ANY flight
-  * Create users (admin role)
+- Full control:
+  - Create, update, delete ANY flight
+  - Create users (admin role)
 
 ---
 
 ## 3. General / Display (`USR`)
 
-* Read-only access
-* Used for:
-
-  * airport screens
-  * public APIs
+- Read-only access
+- Used for:
+  - airport screens
+  - public APIs
 
 ---
 
@@ -50,10 +47,10 @@ Build a **secure backend system** to:
 
 ## ✅ Already implemented:
 
-* Register
-* Login
-* JWT tokens
-* Cookies
+- Register
+- Login
+- JWT tokens
+- Cookies
 
 ---
 
@@ -61,15 +58,15 @@ Build a **secure backend system** to:
 
 ### 3.1 Auth Middleware
 
-* Extract token from cookies
-* Verify JWT
-* Attach `req.user`
+- Extract token from cookies
+- Verify JWT
+- Attach `req.user`
 
 ---
 
 ### 3.2 Role Middleware
 
-* Restrict access based on:
+- Restrict access based on:
 
 ```text
 role → ARL / AOT / USR
@@ -106,12 +103,12 @@ POST /api/v1/flights
 
 ### Access:
 
-* ARL ✅ (own airline only)
-* AOT ✅
+- ARL ✅ (own airline only)
+- AOT ✅
 
 ### Logic:
 
-* If ARL:
+- If ARL:
 
   ```js
   req.body.airline = req.user.airline;
@@ -127,12 +124,12 @@ GET /api/v1/flights
 
 ### Access:
 
-* Public ✅
+- Public ✅
 
 ### Features:
 
-* Sorting by departure time
-* Filtering:
+- Sorting by departure time
+- Filtering:
 
   ```http
   ?airline=INDIGO
@@ -148,12 +145,12 @@ PUT /api/v1/flights/:id
 
 ### Access:
 
-* AOT ✅
-* ARL ✅ (ONLY own flights)
+- AOT ✅
+- ARL ✅ (ONLY own flights)
 
 ### Logic:
 
-* Ownership check
+- Ownership check
 
 ---
 
@@ -165,7 +162,7 @@ DELETE /api/v1/flights/:id
 
 ### Access:
 
-* AOT ONLY ✅
+- AOT ONLY ✅
 
 ---
 
@@ -173,30 +170,30 @@ DELETE /api/v1/flights/:id
 
 ## MUST:
 
-* Password hashing (already done)
-* Token validation (middleware)
-* Role restriction
-* Ownership enforcement
+- Password hashing (already done)
+- Token validation (middleware)
+- Role restriction
+- Ownership enforcement
 
 ---
 
 ## SHOULD:
 
-* Store refresh tokens securely
-* Use environment variables for secrets
+- Store refresh tokens securely
+- Use environment variables for secrets
 
 ---
 
 # 🧩 6. Data Integrity Rules
 
-* Flight must belong to ONE airline
-* No duplicate:
+- Flight must belong to ONE airline
+- No duplicate:
 
 ```text
 flightNumber + departureTime
 ```
 
-* Status must be enum:
+- Status must be enum:
 
 ```text
 scheduled, boarding, delayed, cancelled
@@ -226,29 +223,29 @@ Model (MongoDB)
 
 ### Auth:
 
-* Register
-* Login
-* Invalid login
-* Token expiry
+- Register
+- Login
+- Invalid login
+- Token expiry
 
 ---
 
 ### Flights:
 
-* Create (ARL vs AOT)
-* Update (own vs other airline)
-* Delete (restricted)
-* Get (public)
+- Create (ARL vs AOT)
+- Update (own vs other airline)
+- Delete (restricted)
+- Get (public)
 
 ---
 
 # ⚠️ 9. Edge Cases
 
-* ARL tries to edit other airline → ❌
-* No token → ❌
-* Invalid token → ❌
-* Duplicate flight → ❌
-* Missing required fields → ❌
+- ARL tries to edit other airline → ❌
+- No token → ❌
+- Invalid token → ❌
+- Duplicate flight → ❌
+- Missing required fields → ❌
 
 ---
 
@@ -256,31 +253,31 @@ Model (MongoDB)
 
 ## Phase 1 (Immediate)
 
-* ✅ Auth middleware
-* ✅ Role middleware
-* ✅ Protect one route
+- ✅ Auth middleware
+- ✅ Role middleware
+- ✅ Protect one route
 
 ---
 
 ## Phase 2
 
-* Flight CRUD APIs
-* Ownership logic
+- Flight CRUD APIs
+- Ownership logic
 
 ---
 
 ## Phase 3
 
-* Filtering + sorting
-* Better validation
+- Filtering + sorting
+- Better validation
 
 ---
 
 ## Phase 4 (Optional Advanced)
 
-* Refresh token flow
-* Audit logs (who updated what)
-* Real-time updates (WebSocket)
+- Refresh token flow
+- Audit logs (who updated what)
+- Real-time updates (WebSocket)
 
 ---
 
@@ -315,4 +312,3 @@ Start coding:
 ### 3.
 
 👉 build `/api/v1/flights` (POST first)
-

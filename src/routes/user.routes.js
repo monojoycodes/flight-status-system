@@ -5,11 +5,6 @@ import { allowRoles } from "../middlewares/role.middleware.js";
 
 const router = express.Router();
 
-router.post(
-    "/",
-    verifyToken,
-    allowRoles("AOT"),
-    register
-)
+router.post("/", verifyToken, allowRoles("AOT"), register);
 
 export default router;
