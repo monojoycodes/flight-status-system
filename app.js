@@ -49,10 +49,10 @@ app.use("/api/v1/auth", authRouter);
 
 // 🔐 TEST PROTECTED ROUTE
 app.get("/api/v1/me", verifyToken, (req, res) => {
-  const { id, airline, role } = req.user;
+  const { id, code, name, airline, role } = req.user;
   res.status(200).json({
-    message: "You are authenticated",
-    user: { id, airline, role }
+  message: `Welcome, ${name}. You are authenticated.`,
+    user: { code, airline, role }
   });
 });
 

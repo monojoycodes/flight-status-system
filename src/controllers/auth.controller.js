@@ -101,12 +101,10 @@ export const register = async (req, res) => {
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-      return res
-        .status(400)
-        .json({
-          message: `${name} with ${email} already exists with ${airline} airline.`,
-          registeredCode: existingUser.code
-        });
+      return res.status(400).json({
+        message: `${name} with ${email} already exists with ${airline} airline.`,
+        registeredCode: existingUser.code
+      });
     }
 
     const code = await generateUniqueCode();
@@ -145,40 +143,73 @@ export const register = async (req, res) => {
 
 export const createUserByAdmin = async (req, res) => {
   try {
-    const { name, email, password, role, airline } = req.body;
+    // 🔥 Handle both single user and batch creation
+    const users = Array.isArray(req.body) ? req.body : [req.body];
 
-    const existingUser = await User.findOne({ email });
+    const createdUsers = [];
+    const errors = [];
 
-    if (existingUser) {
-      return res.status(400).json({
-        message: "User already exists"
-      });
+    for (const userData of users) {
+      const { name, email, password, role, airline } = userData;
+
+      // Validate required fields
+      if (!name || !email || !password || !role || !airline) {
+        errors.push({
+          email,
+          message: "Missing required fields: name, email, password, role, airline"
+        });
+        continue;
+      }
+
+      const existingUser = await User.findOne({ email });
+
+      if (existingUser) {
+        errors.push({
+          email,
+          message: "User already exists"
+        });
+        continue;
+      }
+
+      // 🔥 role validation - trim and validate against schema
+      const trimmedRole = role?.trim().toUpperCase();
+      if (!["ARL", "AOT"].includes(trimmedRole)) {
+        errors.push({
+          email,
+          message: `Invalid role "${role}". Allowed roles: ARL (Airline), AOT (Airport)`
+        });
+        continue;
+      }
+
+      const code = await generateUniqueCode();
+
+      try {
+        const user = await User.create({
+          name,
+          email,
+          password,
+          role: trimmedRole,
+          airline: trimmedRole === "ARL" ? airline : null,
+          code
+        });
+
+        createdUsers.push({
+          email: user.email,
+          code: user.code,
+          role: user.role
+        });
+      } catch (createError) {
+        errors.push({
+          email,
+          message: createError.message
+        });
+      }
     }
-
-    // 🔥 role validation
-    if (!["ARL", "AOT"].includes(role)) {
-      return res.status(400).json({
-        message: "Invalid role"
-      });
-    }
-
-    const code = await generateUniqueCode();
-
-    const user = await User.create({
-      name,
-      email,
-      password,
-      role,
-      airline: role === "ARL" ? airline : null,
-      code
-    });
 
     return res.status(201).json({
-      message: "User created by admin",
-      user: {
-        email: user.email,
-        role: user.role
-      }
+      message: `${createdUsers.length} user(s) created successfully`,
+      created: createdUsers,
+      errors: errors.length > 0 ? errors : undefined
     });
   } catch (error) {
     return res.status(500).json({

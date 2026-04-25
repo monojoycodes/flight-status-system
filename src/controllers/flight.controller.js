@@ -74,10 +74,7 @@ export const getFlights = async (req, res) => {
     // count with filter
     const total = await Schedule.countDocuments(filter);
 
-    const flights = await Schedule.find(filter)
-      .sort({ departureTime: 1 })
-      .skip(skip)
-      .limit(limit);
+    const flights = await Schedule.find(filter).sort({ departureTime: 1 }).skip(skip).limit(limit);
 
     return res.status(200).json({
       total,

@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import User from "../models/users.js";
 
 const MONGODB_URI = process.env.MONGODB_URI;
+// const MONGODB_URI = "mongodb://localhost:27017/";
 
 const seedAdmin = async () => {
   if (!MONGODB_URI) {

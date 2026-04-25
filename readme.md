@@ -10,6 +10,7 @@ Production-ready Node.js + Express + MongoDB backend for managing flight schedul
 ## Overview
 
 REST API for flight schedule management with:
+
 - JWT token-based authentication
 - Role-based access control (ARL, AOT, USR)
 - Flight CRUD operations with pagination and filtering
@@ -48,11 +49,13 @@ REFRESHTOKENSECRET=your_refresh_secret
 ## Running
 
 Development mode:
+
 ```bash
 npm run dev
 ```
 
 Production:
+
 ```bash
 npm start
 ```
@@ -64,6 +67,7 @@ Server runs on `http://localhost:6969/api/v1`
 ## API Endpoints
 
 ### Authentication
+
 - `POST /auth/register` - Register new user
 - `POST /auth/login` - Login and get tokens
 - `POST /auth/refresh` - Refresh access token
@@ -71,6 +75,7 @@ Server runs on `http://localhost:6969/api/v1`
 - `POST /auth/create-user` - Create user (AOT only)
 
 ### Flights
+
 - `POST /flight` - Create flight (ARL/AOT)
 - `GET /flight` - List flights with pagination and filters (public)
 - `PUT /flight/:id` - Update flight (ARL/AOT)

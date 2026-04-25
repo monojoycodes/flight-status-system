@@ -26,7 +26,7 @@ export const updateFlightSchema = z.object({
 
 
 export const flightQuerySchema = z.object({
-  airline: z.string().max(3).toUpperCase().optional(),
+  airline: z.string().max(50).toUpperCase().optional(),
   status: z.enum(["scheduled", "boarding", "check-in", "delayed", "cancelled", "security"]).optional(),
   destination: z.string().max(3).toUpperCase().optional(),
   limit: z.string().regex(/^\d+$/).transform(Number).refine(n => n >= 1 && n <= 100, "Limit must be between 1 and 100").optional(),
