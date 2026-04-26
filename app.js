@@ -4,6 +4,11 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import authRouter from "./src/routes/auth.routes.js";
 import cookieParser from "cookie-parser";
+import helmet from "helmet";
+import compression from "compression";
+import morgan from "morgan";
+import statusMonitor from "express-status-monitor";
+
 import { verifyToken } from "./src/middlewares/auth.middleware.js";
 import flightRouter from "./src/routes/flight.routes.js";
 import userRouter from "./src/routes/user.routes.js";
@@ -11,6 +16,12 @@ import userRouter from "./src/routes/user.routes.js";
 dotenv.config();
 
 const app = express();
+
+// Production / Monitoring Middlewares
+app.use(statusMonitor());
+app.use(helmet());
+app.use(compression());
+app.use(morgan("dev"));
 
 //middlewares
 app.use(

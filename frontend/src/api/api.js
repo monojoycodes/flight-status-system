@@ -1,4 +1,7 @@
-const BASE_URL = "http://localhost:6969/api/v1";
+let BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:6969/api/v1";
+if (!BASE_URL.endsWith("/api/v1")) {
+  BASE_URL = `${BASE_URL.replace(/\/$/, '')}/api/v1`;
+}
 
 const request = async (endpoint, options = {}) => {
   const config = {

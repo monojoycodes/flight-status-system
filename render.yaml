@@ -1,0 +1,37 @@
+services:
+  # BACKEND SERVICE (API)
+  - type: web
+    name: skyboard-api
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 6969
+      - key: MONGODB_URI
+        sync: false # User must set this manually in Render dashboard for security
+      - key: ACCESSTOKENSECRET
+        sync: false # User must set this manually
+      - key: REFRESHTOKENSECRET
+        sync: false # User must set this manually
+
+  # FRONTEND SERVICE (STATIC SITE)
+  - type: web
+    name: skyboard-frontend
+    env: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    rootDir: frontend
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: skyboard-api
+          envVarKey: RENDER_EXTERNAL_URL
+          # Appends the API path dynamically based on the generated backend URL
+          # Note: Render doesn't natively concatenate `fromService` like variable interpolation.
+          # We'll just define the base URL for the frontend and hardcode the suffix in api.js?
+          # Actually, it's better to update frontend api.js to append `/api/v1` to the base.
+          # Or we can just type the known Render URL once created. For now, we will pass the base Render URL.
