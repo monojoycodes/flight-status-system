@@ -3,6 +3,7 @@ services:
   - type: web
     name: skyboard-api
     env: node
+    plan: free
     buildCommand: npm install
     startCommand: npm start
     envVars:
@@ -21,6 +22,7 @@ services:
   - type: web
     name: skyboard-frontend
     env: static
+    plan: free
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
     rootDir: frontend
