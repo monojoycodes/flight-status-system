@@ -24,9 +24,20 @@ app.use(compression());
 app.use(morgan("dev"));
 
 //middlewares
+const allowedOrigins = [
+  "http://localhost:5173",
+  process.env.FRONTEND_URL // Will be defined if they provide it
+];
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin) || origin.includes("vercel.app") || origin.includes("onrender.com")) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true
   })
 );
